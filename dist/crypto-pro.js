@@ -840,6 +840,7 @@ var CryptoPro =
 	    this.issuerName = item.issuerName;
 	    this.validFrom = item.validFrom;
 	    this.validTo = item.validTo;
+	    this.serialNumber = item.serialNumber;
 	}
 	
 	/**
@@ -1168,7 +1169,8 @@ var CryptoPro =
 	                        subjectName: 'yield' + item.SubjectName,
 	                        issuerName: 'yield' + item.IssuerName,
 	                        validFrom: 'yield' + item.ValidFromDate,
-	                        validTo: 'yield' + item.ValidToDate
+	                        validTo: 'yield' + item.ValidToDate,
+	                        serialNumber: 'yield' + item.SerialNumber
 	                    }));
 	
 	                    count--;
@@ -1216,6 +1218,35 @@ var CryptoPro =
 	    });
 	}
 	
+	function signData(hash, data) {
+	    return new Promise(function(resolve, reject) {
+	        getCadesCert(hash).then(function (cert) {
+	            eval(cryptoCommon.generateAsyncFn(function signData() {
+	                var oSignedData = 'yield' + cryptoCommon.createObj('CAdESCOM.CadesSignedData'),
+	                    oSigner = 'yield' + cryptoCommon.createObj('CAdESCOM.CPSigner'),
+	                    signature;
+	                
+	                try {
+	                    void('yield' + oSigner.propset_Certificate(cert));
+	                    void('yield' + oSignedData.propset_Content(data));
+	                } catch (err) {
+	                    reject('Не удалось установить настройки для подписи: ' + err.message);
+	                    return;
+	                }
+	
+	                try {
+	                    signature = 'yield' + oSignedData.SignCades(oSigner, 1);
+	                } catch (err) {
+	                    reject('Не удалось создать подпись: ' + err.message);
+	                    return;
+	                }
+	
+	                resolve(signature);
+	            }));
+	        }, reject);
+	    });
+	}
+	
 	/**
 	 * Создает подпись base64 строки по hash'у сертификата
 	 *
@@ -1224,12 +1255,12 @@ var CryptoPro =
 	 * @param {Boolean} signType -- тип подписи открепленная (true) / присоединенная (false) (default: true)
 	 * @returns {Promise} -- обещание, которое зарезолвится с данными о подписи {String}
 	 * */
-	function signData(hash, dataBase64, signType) {
+	function signDataBase64(hash, dataBase64, signType) {
 	    signType = typeof signType === 'undefined' ? true : Boolean(signType);
 	
 	    return new Promise(function (resolve, reject) {
 	        getCadesCert(hash).then(function (cert) {
-	            eval(cryptoCommon.generateAsyncFn(function signData() {
+	            eval(cryptoCommon.generateAsyncFn(function signDataBase64() {
 	                var clientTime = new Date(),
 	                    oAttrs = 'yield' + cryptoCommon.createObj('CADESCOM.CPAttribute'),
 	                    oSignedData = 'yield' + cryptoCommon.createObj('CAdESCOM.CadesSignedData'),
@@ -1377,6 +1408,7 @@ var CryptoPro =
 	    getCertsList: getCertsList,
 	    getCert: getCert,
 	    signData: signData,
+	    signDataBase64: signDataBase64,
 	    signDataXML: signDataXML,
 	    getSystemInfo: getSystemInfo,
 	    isValidCSPVersion: isValidCSPVersion,
