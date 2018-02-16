@@ -269,6 +269,23 @@ function getCertInfo(tags, propName) {
     });
 }
 
+function getCertBase64(hash) {
+    return new Promise(function (resolve, reject) {
+        getCadesCert(hash).then(function (cert) {
+            eval(cryptoCommon.generateAsyncFn(function getCertBase64() {
+
+                try {
+                    base64 = 'yield' + cert.Export(0);
+                } catch (err) {
+                    reject('Ошибка при экспорте сертификата: ', err.message);
+                    return;
+                }
+
+                resolve(base64);
+            }))
+        }, reject);
+    })
+}
 /**
  * Возвращает список сертификатов, доступных в системе
  *
@@ -581,5 +598,6 @@ module.exports = {
     signDataXML: signDataXML,
     getSystemInfo: getSystemInfo,
     isValidCSPVersion: isValidCSPVersion,
-    isValidCadesVersion: isValidCadesVersion
+    isValidCadesVersion: isValidCadesVersion,
+    getCertBase64: getCertBase64
 };
