@@ -26,7 +26,7 @@ Certificate.prototype.isValid = function isValid() {
                 result = 'yield' + cert.IsValid();
                 result = 'yield' + result.Result;
             } catch (err) {
-                reject('Ошибка при проверке сертификата: ', err.message);
+                reject('Ошибка при проверке сертификата');
                 return;
             }
 
@@ -48,7 +48,7 @@ Certificate.prototype.getProp = function (propName) {
             try {
                 result = 'yield' + cert[propName];
             } catch (err) {
-                reject('Ошибка при обращении к свойству сертификата: ', err.message);
+                reject('Ошибка при обращении к свойству сертификата');
                 return;
             }
 
@@ -70,7 +70,7 @@ Certificate.prototype.exportBase64 = function exportBase64() {
             try {
                 base64 = 'yield' + cert.Export(0);
             } catch (err) {
-                reject('Ошибка при экспорте сертификата: ', err.message);
+                reject('Ошибка при экспорте сертификата');
                 return;
             }
 
@@ -97,7 +97,7 @@ Certificate.prototype.getAlgorithm = function getAlgorithm() {
                 result.algorithm = 'yield' + algorithm.FriendlyName;
                 result.oid = 'yield' + algorithm.Value;
             } catch (err) {
-                reject('Ошибка при получении алгоритма: ', err.message);
+                reject('Ошибка при получении алгоритма');
                 return;
             }
 
@@ -152,7 +152,7 @@ Certificate.prototype.getExtendedKeyUsage = function getExtendedKeyUsage() {
                     }
                 }
             } catch (err) {
-                reject('Ошибка при получении ОИД\'ов: ', err.message);
+                reject('Ошибка при получении ОИД\'ов');
                 return;
             }
 
@@ -208,7 +208,7 @@ function getCadesCert(hash) {
                     cadesplugin.CAPICOM_STORE_OPEN_MAXIMUM_ALLOWED
                 ));
             } catch (err) {
-                reject('Ошибка при открытии хранилища: ' + err.message);
+                reject('Ошибка при открытии хранилища' );
                 return;
             }
 
@@ -217,7 +217,7 @@ function getCadesCert(hash) {
                 certs = 'yield' + oStore.Certificates;
                 certCnt = 'yield' + certs.Count;
             } catch (err) {
-                reject('Ошибка получения списка сертификатов: ' + err.message);
+                reject('Ошибка получения списка сертификатов' );
                 return;
             }
 
@@ -236,7 +236,7 @@ function getCadesCert(hash) {
                     throw new Error(hash);
                 }
             } catch (err) {
-                reject('Не удалось получить сертификат по хэшу: ' + err.message);
+                reject('Не удалось получить сертификат по хэшу' );
                 return;
             }
 
@@ -260,7 +260,7 @@ function getCertInfo(tags, propName) {
             try {
                 propInfo = 'yield' + cert[propName];
             } catch (err) {
-                reject('Ошибка при извлечении данных из сертификата: ', err.message);
+                reject('Ошибка при извлечении данных из сертификата');
                 return;
             }
 
@@ -277,7 +277,7 @@ function getCertBase64(hash) {
                 try {
                     base64 = 'yield' + cert.Export(0);
                 } catch (err) {
-                    reject('Ошибка при экспорте сертификата: ', err.message);
+                    reject('Ошибка при экспорте сертификата');
                     return;
                 }
 
@@ -314,7 +314,7 @@ function getCertsList(resetCache) {
                     cadesplugin.CAPICOM_STORE_OPEN_MAXIMUM_ALLOWED
                 ));
             } catch (err) {
-                reject('Ошибка при открытии хранилища: ' + err.message);
+                reject('Ошибка при открытии хранилища: ' );
                 return;
             }
 
@@ -336,7 +336,7 @@ function getCertsList(resetCache) {
                     count = 'yield' + certs.Count;
                 }
             } catch (err) {
-                reject('Ошибка получения списка сертификатов: ' + err.message);
+                reject('Ошибка получения списка сертификатов' );
                 return;
             }
 
@@ -362,7 +362,7 @@ function getCertsList(resetCache) {
                     count--;
                 }
             } catch (err) {
-                reject('Ошибка обработки сертификатов: ' + err.message);
+                reject('Ошибка обработки сертификатов' );
                 return;
             }
 
@@ -416,14 +416,14 @@ function signData(hash, data) {
                     void('yield' + oSigner.propset_Certificate(cert));
                     void('yield' + oSignedData.propset_Content(data));
                 } catch (err) {
-                    reject('Не удалось установить настройки для подписи: ' + err.message);
+                    reject('Не удалось установить настройки для подписи' );
                     return;
                 }
 
                 try {
                     signature = 'yield' + oSignedData.SignCades(oSigner, 1);
                 } catch (err) {
-                    reject('Не удалось создать подпись: ' + err.message);
+                    reject('Не удалось создать подпись' );
                     return;
                 }
 
@@ -460,7 +460,7 @@ function signDataBase64(hash, dataBase64, signType) {
                     void('yield' + oAttrs.propset_Name(cryptoConstants.Time.AUTHENTICATED_ATTRIBUTE_SIGNING_TIME));
                     void('yield' + oAttrs.propset_Value(clientTime));
                 } catch (err) {
-                    reject('Ошибка при установке данных подписи: ' + err.message);
+                    reject('Ошибка при установке данных подписи' );
                     return;
                 }
 
@@ -473,7 +473,7 @@ function signDataBase64(hash, dataBase64, signType) {
                     void('yield' + oSignedData.propset_Content(dataBase64));
                     void('yield' + oSigner.propset_Options(cadesplugin.CAPICOM_CERTIFICATE_INCLUDE_END_ENTITY_ONLY));
                 } catch (err) {
-                    reject('Не удалось установить настройки для подписи: ' + err.message);
+                    reject('Не удалось установить настройки для подписи' );
                     return;
                 }
 
@@ -484,7 +484,7 @@ function signDataBase64(hash, dataBase64, signType) {
                         signType
                     );
                 } catch (err) {
-                    reject('Не удалось создать подпись: ' + err.message);
+                    reject('Не удалось создать подпись' );
                     return;
                 }
 
@@ -522,14 +522,14 @@ function signDataXML(hash, dataXML) {
                     // Устанавливаем алгоритм хэширования
                     void('yield' + signerXML.propset_DigestMethod(cnts.GostXmlDSigUrls.XmlDsigGost3411Url));
                 } catch (err) {
-                    reject('Не удалось установить настройки для подписи: ' + err.message);
+                    reject('Не удалось установить настройки для подписи' );
                     return;
                 }
 
                 try {
                     signature = 'yield' + signerXML.Sign(oSigner);
                 } catch (err) {
-                    reject('Не удалось создать подпись: ' + err.message);
+                    reject('Не удалось создать подпись' );
                     return;
                 }
 
@@ -565,7 +565,7 @@ function getSystemInfo() {
 
                 resolve(sysInfo);
             } catch (err) {
-                reject('Ошибка при получении информации о системе: ', err.message);
+                reject('Ошибка при получении информации о системе');
             }
         }));
     });
