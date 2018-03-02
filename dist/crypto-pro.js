@@ -857,7 +857,7 @@ var CryptoPro =
 	                result = 'yield' + cert.IsValid();
 	                result = 'yield' + result.Result;
 	            } catch (err) {
-	                reject('Ошибка при проверке сертификата: ', err.message);
+	                reject('Ошибка при проверке сертификата');
 	                return;
 	            }
 	
@@ -879,7 +879,7 @@ var CryptoPro =
 	            try {
 	                result = 'yield' + cert[propName];
 	            } catch (err) {
-	                reject('Ошибка при обращении к свойству сертификата: ', err.message);
+	                reject('Ошибка при обращении к свойству сертификата');
 	                return;
 	            }
 	
@@ -901,7 +901,7 @@ var CryptoPro =
 	            try {
 	                base64 = 'yield' + cert.Export(0);
 	            } catch (err) {
-	                reject('Ошибка при экспорте сертификата: ', err.message);
+	                reject('Ошибка при экспорте сертификата');
 	                return;
 	            }
 	
@@ -928,7 +928,7 @@ var CryptoPro =
 	                result.algorithm = 'yield' + algorithm.FriendlyName;
 	                result.oid = 'yield' + algorithm.Value;
 	            } catch (err) {
-	                reject('Ошибка при получении алгоритма: ', err.message);
+	                reject('Ошибка при получении алгоритма');
 	                return;
 	            }
 	
@@ -983,7 +983,7 @@ var CryptoPro =
 	                    }
 	                }
 	            } catch (err) {
-	                reject('Ошибка при получении ОИД\'ов: ', err.message);
+	                reject('Ошибка при получении ОИД\'ов');
 	                return;
 	            }
 	
@@ -1039,7 +1039,7 @@ var CryptoPro =
 	                    cadesplugin.CAPICOM_STORE_OPEN_MAXIMUM_ALLOWED
 	                ));
 	            } catch (err) {
-	                reject('Ошибка при открытии хранилища: ' + err.message);
+	                reject('Ошибка при открытии хранилища');
 	                return;
 	            }
 	
@@ -1048,7 +1048,7 @@ var CryptoPro =
 	                certs = 'yield' + oStore.Certificates;
 	                certCnt = 'yield' + certs.Count;
 	            } catch (err) {
-	                reject('Ошибка получения списка сертификатов: ' + err.message);
+	                reject('Ошибка получения списка сертификатов');
 	                return;
 	            }
 	
@@ -1067,7 +1067,7 @@ var CryptoPro =
 	                    throw new Error(hash);
 	                }
 	            } catch (err) {
-	                reject('Не удалось получить сертификат по хэшу: ' + err.message);
+	                reject('Не удалось получить сертификат по хэшу');
 	                return;
 	            }
 	
@@ -1091,7 +1091,7 @@ var CryptoPro =
 	            try {
 	                propInfo = 'yield' + cert[propName];
 	            } catch (err) {
-	                reject('Ошибка при извлечении данных из сертификата: ', err.message);
+	                reject('Ошибка при извлечении данных из сертификата');
 	                return;
 	            }
 	
@@ -1108,7 +1108,7 @@ var CryptoPro =
 	                try {
 	                    base64 = 'yield' + cert.Export(0);
 	                } catch (err) {
-	                    reject('Ошибка при экспорте сертификата: ', err.message);
+	                    reject('Ошибка при экспорте сертификата');
 	                    return;
 	                }
 	
@@ -1145,7 +1145,7 @@ var CryptoPro =
 	                    cadesplugin.CAPICOM_STORE_OPEN_MAXIMUM_ALLOWED
 	                ));
 	            } catch (err) {
-	                reject('Ошибка при открытии хранилища: ' + err.message);
+	                reject('Ошибка при открытии хранилища: ');
 	                return;
 	            }
 	
@@ -1167,7 +1167,7 @@ var CryptoPro =
 	                    count = 'yield' + certs.Count;
 	                }
 	            } catch (err) {
-	                reject('Ошибка получения списка сертификатов: ' + err.message);
+	                reject('Ошибка получения списка сертификатов');
 	                return;
 	            }
 	
@@ -1179,7 +1179,6 @@ var CryptoPro =
 	            try {
 	                while (count) {
 	                    item = 'yield' + certs.Item(count);
-	
 	                    result.push(new Certificate({
 	                        _cert: 'yield' + item,
 	                        thumbprint: 'yield' + item.Thumbprint,
@@ -1193,14 +1192,12 @@ var CryptoPro =
 	                    count--;
 	                }
 	            } catch (err) {
-	                reject('Ошибка обработки сертификатов: ' + err.message);
+	                reject('Ошибка обработки сертификатов');
 	                return;
 	            }
-	
 	            oStore.Close();
 	
 	            _certListCache = cryptoCommon.prepareCertsInfo(result);
-	
 	            resolve(_certListCache);
 	        }));
 	    });
@@ -1236,25 +1233,47 @@ var CryptoPro =
 	}
 	
 	function signData(hash, data) {
-	    return new Promise(function(resolve, reject) {
+	    return new Promise(function (resolve, reject) {
 	        getCadesCert(hash).then(function (cert) {
 	            eval(cryptoCommon.generateAsyncFn(function signData() {
 	                var oSignedData = 'yield' + cryptoCommon.createObj('CAdESCOM.CadesSignedData'),
 	                    oSigner = 'yield' + cryptoCommon.createObj('CAdESCOM.CPSigner'),
 	                    signature;
-	                
+	
+	                var oSigningTimeAttr = 'yield' + cryptoCommon.createObj('CADESCOM.CPAttribute');
+	                var CAPICOM_AUTHENTICATED_ATTRIBUTE_SIGNING_TIME = 0;
+	                var CADESCOM_AUTHENTICATED_ATTRIBUTE_DOCUMENT_NAME = 1;
+	                var CAPICOM_CERTIFICATE_INCLUDE_WHOLE_CHAIN = 1;
+	                var CADESCOM_BASE64_TO_BINARY = 1;
+	                var CADESCOM_CADES_BES = 1;
+	
+	                var dataToSign = window.btoa(unescape(encodeURIComponent(data)));
+	
+	                var oTimeNow = new Date();
+	                var attr = 'yield' + oSigner.AuthenticatedAttributes2;
+	                var oDocumentNameAttr = 'yield' + cryptoCommon.createObj("CADESCOM.CPAttribute");
+	
+	
 	                try {
+	                    void ('yield' + oSigningTimeAttr.propset_Name(CAPICOM_AUTHENTICATED_ATTRIBUTE_SIGNING_TIME))
+	                    void ('yield' + oSigningTimeAttr.propset_Value(oTimeNow));
+	                    void ('yield' + attr.Add(oSigningTimeAttr));
+	                    void ('yield' + oDocumentNameAttr.propset_Name(CADESCOM_AUTHENTICATED_ATTRIBUTE_DOCUMENT_NAME));
+	                    void ('yield' + oDocumentNameAttr.propset_Value("Document Name"));
+	                    void ('yield' + attr.Add(oDocumentNameAttr));
 	                    void('yield' + oSigner.propset_Certificate(cert));
-	                    void('yield' + oSignedData.propset_Content(data));
+	                    void('yield' + oSigner.propset_Options(CAPICOM_CERTIFICATE_INCLUDE_WHOLE_CHAIN));
+	                    void('yield' + oSignedData.propset_ContentEncoding(CADESCOM_BASE64_TO_BINARY));
+	                    void ('yield' + oSignedData.propset_Content(dataToSign));
 	                } catch (err) {
-	                    reject('Не удалось установить настройки для подписи: ' + err.message);
+	                    reject('Не удалось установить настройки для подписи');
 	                    return;
 	                }
 	
 	                try {
-	                    signature = 'yield' + oSignedData.SignCades(oSigner, 1);
+	                    signature = 'yield' + oSignedData.SignCades(oSigner, CADESCOM_CADES_BES);
 	                } catch (err) {
-	                    reject('Не удалось создать подпись: ' + err.message);
+	                    reject('Не удалось создать подпись');
 	                    return;
 	                }
 	
@@ -1291,7 +1310,7 @@ var CryptoPro =
 	                    void('yield' + oAttrs.propset_Name(cryptoConstants.Time.AUTHENTICATED_ATTRIBUTE_SIGNING_TIME));
 	                    void('yield' + oAttrs.propset_Value(clientTime));
 	                } catch (err) {
-	                    reject('Ошибка при установке данных подписи: ' + err.message);
+	                    reject('Ошибка при установке данных подписи');
 	                    return;
 	                }
 	
@@ -1304,7 +1323,7 @@ var CryptoPro =
 	                    void('yield' + oSignedData.propset_Content(dataBase64));
 	                    void('yield' + oSigner.propset_Options(cadesplugin.CAPICOM_CERTIFICATE_INCLUDE_END_ENTITY_ONLY));
 	                } catch (err) {
-	                    reject('Не удалось установить настройки для подписи: ' + err.message);
+	                    reject('Не удалось установить настройки для подписи');
 	                    return;
 	                }
 	
@@ -1315,7 +1334,7 @@ var CryptoPro =
 	                        signType
 	                    );
 	                } catch (err) {
-	                    reject('Не удалось создать подпись: ' + err.message);
+	                    reject('Не удалось создать подпись');
 	                    return;
 	                }
 	
@@ -1353,14 +1372,14 @@ var CryptoPro =
 	                    // Устанавливаем алгоритм хэширования
 	                    void('yield' + signerXML.propset_DigestMethod(cnts.GostXmlDSigUrls.XmlDsigGost3411Url));
 	                } catch (err) {
-	                    reject('Не удалось установить настройки для подписи: ' + err.message);
+	                    reject('Не удалось установить настройки для подписи');
 	                    return;
 	                }
 	
 	                try {
 	                    signature = 'yield' + signerXML.Sign(oSigner);
 	                } catch (err) {
-	                    reject('Не удалось создать подпись: ' + err.message);
+	                    reject('Не удалось создать подпись');
 	                    return;
 	                }
 	
@@ -1396,7 +1415,7 @@ var CryptoPro =
 	
 	                resolve(sysInfo);
 	            } catch (err) {
-	                reject('Ошибка при получении информации о системе: ', err.message);
+	                reject('Ошибка при получении информации о системе');
 	            }
 	        }));
 	    });
@@ -1432,6 +1451,7 @@ var CryptoPro =
 	    isValidCadesVersion: isValidCadesVersion,
 	    getCertBase64: getCertBase64
 	};
+
 
 /***/ },
 /* 3 */
