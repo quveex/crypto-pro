@@ -300,11 +300,16 @@ function getCertsList(resetCache) {
         }
 
         eval(cryptoCommon.generateAsyncFn(function getCertsList() {
-            var oStore = 'yield' + cryptoCommon.createObj('CAdESCOM.Store'),
-                result = [],
-                certs,
-                count,
-                item;
+             try {
+                 var oStore = 'yield' + cryptoCommon.createObj('CAdESCOM.Store'),
+                     result = [],
+                     certs,
+                     count,
+                     item;
+             } catch (e) {
+                 reject('Операция была отменена пользователем');
+                 return;
+             }
 
             // Открываем хранилище
             try {
