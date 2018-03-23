@@ -576,10 +576,10 @@
     {
         if(plugin_resolved == 1)
             return;
-        if(isFireFox)
-        {
-            show_firefox_missing_extension_dialog();
-        }
+        // if(isFireFox)
+        // {
+        //     show_firefox_missing_extension_dialog();
+        // }
         plugin_resolved = 1;
         if(canPromise)
         {
