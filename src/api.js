@@ -420,6 +420,7 @@ function signData(hash, data) {
                 var CAPICOM_CERTIFICATE_INCLUDE_WHOLE_CHAIN = 1;
                 var CADESCOM_BASE64_TO_BINARY = 1;
                 var CADESCOM_CADES_BES = 1;
+                var CAPICOM_CERTIFICATE_INCLUDE_END_ENTITY_ONLY = 2;
 
                 var dataToSign = window.btoa(unescape(encodeURIComponent(data)));
 
@@ -436,7 +437,7 @@ function signData(hash, data) {
                     void ('yield' + oDocumentNameAttr.propset_Value("Document Name"));
                     void ('yield' + attr.Add(oDocumentNameAttr));
                     void('yield' + oSigner.propset_Certificate(cert));
-                    // void('yield' + oSigner.propset_Options(CAPICOM_CERTIFICATE_INCLUDE_WHOLE_CHAIN));
+                    void('yield' + oSigner.propset_Options(CAPICOM_CERTIFICATE_INCLUDE_END_ENTITY_ONLY));
                     void('yield' + oSignedData.propset_ContentEncoding(CADESCOM_BASE64_TO_BINARY));
                     void ('yield' + oSignedData.propset_Content(dataToSign));
                 } catch (err) {
