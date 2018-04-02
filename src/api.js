@@ -436,7 +436,7 @@ function signData(hash, data) {
                     void ('yield' + oDocumentNameAttr.propset_Value("Document Name"));
                     void ('yield' + attr.Add(oDocumentNameAttr));
                     void('yield' + oSigner.propset_Certificate(cert));
-                    void('yield' + oSigner.propset_Options(CAPICOM_CERTIFICATE_INCLUDE_WHOLE_CHAIN));
+                    // void('yield' + oSigner.propset_Options(CAPICOM_CERTIFICATE_INCLUDE_WHOLE_CHAIN));
                     void('yield' + oSignedData.propset_ContentEncoding(CADESCOM_BASE64_TO_BINARY));
                     void ('yield' + oSignedData.propset_Content(dataToSign));
                 } catch (err) {
