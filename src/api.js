@@ -5,7 +5,7 @@ var cryptoCommon = require('./common'),
 function Certificate(item) {
     this._cert = item._cert;
     this.thumbprint = item.thumbprint;
-    this.subjectName = item.subjectName;
+    this.subjectName = item.subjectName.replace(/\"+/g, '"');
     this.issuerName = item.issuerName;
     this.validFrom = item.validFrom;
     this.validTo = item.validTo;

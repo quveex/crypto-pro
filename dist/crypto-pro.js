@@ -704,10 +704,10 @@ var CryptoPro =
 	    {
 	        if(plugin_resolved == 1)
 	            return;
-	        if(isFireFox)
-	        {
-	            show_firefox_missing_extension_dialog();
-	        }
+	        // if(isFireFox)
+	        // {
+	        //     show_firefox_missing_extension_dialog();
+	        // }
 	        plugin_resolved = 1;
 	        if(canPromise)
 	        {
@@ -836,7 +836,7 @@ var CryptoPro =
 	function Certificate(item) {
 	    this._cert = item._cert;
 	    this.thumbprint = item.thumbprint;
-	    this.subjectName = item.subjectName;
+	    this.subjectName = item.subjectName.replace(/\"+/g, '"');
 	    this.issuerName = item.issuerName;
 	    this.validFrom = item.validFrom;
 	    this.validTo = item.validTo;
@@ -1251,6 +1251,7 @@ var CryptoPro =
 	                var CAPICOM_CERTIFICATE_INCLUDE_WHOLE_CHAIN = 1;
 	                var CADESCOM_BASE64_TO_BINARY = 1;
 	                var CADESCOM_CADES_BES = 1;
+	                var CAPICOM_CERTIFICATE_INCLUDE_END_ENTITY_ONLY = 2;
 	
 	                var dataToSign = window.btoa(unescape(encodeURIComponent(data)));
 	
@@ -1267,7 +1268,7 @@ var CryptoPro =
 	                    void ('yield' + oDocumentNameAttr.propset_Value("Document Name"));
 	                    void ('yield' + attr.Add(oDocumentNameAttr));
 	                    void('yield' + oSigner.propset_Certificate(cert));
-	                    void('yield' + oSigner.propset_Options(CAPICOM_CERTIFICATE_INCLUDE_WHOLE_CHAIN));
+	                    void('yield' + oSigner.propset_Options(CAPICOM_CERTIFICATE_INCLUDE_END_ENTITY_ONLY));
 	                    void('yield' + oSignedData.propset_ContentEncoding(CADESCOM_BASE64_TO_BINARY));
 	                    void ('yield' + oSignedData.propset_Content(dataToSign));
 	                } catch (err) {
@@ -1636,7 +1637,7 @@ var CryptoPro =
 	
 	        // Удалось ли вытащить Common Name
 	        if (c.name && c.name[1]) {
-	            c.name = c.name[1];
+	            c.name = c.name[1].replace(/\"/, '');
 	        }
 	
 	        c.validFrom = getReadableDate(c.validFrom);

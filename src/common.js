@@ -172,7 +172,7 @@ function prepareCertsInfo(items) {
 
         // Удалось ли вытащить Common Name
         if (c.name && c.name[1]) {
-            c.name = c.name[1];
+            c.name = c.name[1].replace(/\"/, '');
         }
 
         c.validFrom = getReadableDate(c.validFrom);
