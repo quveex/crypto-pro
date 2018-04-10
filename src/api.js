@@ -406,7 +406,9 @@ function getCert(hash) {
     });
 }
 
-function signData(hash, data) {
+function signData(hash, data, signType) {
+    signType = typeof signType === 'undefined' ? true : Boolean(signType);
+
     return new Promise(function (resolve, reject) {
         getCadesCert(hash).then(function (cert) {
             eval(cryptoCommon.generateAsyncFn(function signData() {
@@ -446,7 +448,7 @@ function signData(hash, data) {
                 }
 
                 try {
-                    signature = 'yield' + oSignedData.SignCades(oSigner, CADESCOM_CADES_BES);
+                    signature = 'yield' + oSignedData.SignCades(oSigner, CADESCOM_CADES_BES, signType);
                 } catch (err) {
                     reject('Не удалось создать подпись');
                     return;
