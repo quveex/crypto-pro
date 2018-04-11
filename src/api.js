@@ -416,7 +416,7 @@ function signData(hash, data, signType) {
                     oSigner = 'yield' + cryptoCommon.createObj('CAdESCOM.CPSigner'),
                     signature;
 
-                var oSigningTimeAttr = 'yield' + cryptoCommon.createObj('CADESCOM.CPAttribute');
+                // var oSigningTimeAttr = 'yield' + cryptoCommon.createObj('CADESCOM.CPAttribute');
                 var CAPICOM_AUTHENTICATED_ATTRIBUTE_SIGNING_TIME = 0;
                 var CADESCOM_AUTHENTICATED_ATTRIBUTE_DOCUMENT_NAME = 1;
                 var CAPICOM_CERTIFICATE_INCLUDE_WHOLE_CHAIN = 1;
@@ -426,15 +426,15 @@ function signData(hash, data, signType) {
 
                 var dataToSign = window.btoa(unescape(encodeURIComponent(data)));
 
-                var oTimeNow = new Date();
+                // var oTimeNow = new Date();
                 var attr = 'yield' + oSigner.AuthenticatedAttributes2;
                 var oDocumentNameAttr = 'yield' + cryptoCommon.createObj("CADESCOM.CPAttribute");
 
 
                 try {
-                    void ('yield' + oSigningTimeAttr.propset_Name(CAPICOM_AUTHENTICATED_ATTRIBUTE_SIGNING_TIME))
-                    void ('yield' + oSigningTimeAttr.propset_Value(oTimeNow));
-                    void ('yield' + attr.Add(oSigningTimeAttr));
+                    // void ('yield' + oSigningTimeAttr.propset_Name(CAPICOM_AUTHENTICATED_ATTRIBUTE_SIGNING_TIME))
+                    // void ('yield' + oSigningTimeAttr.propset_Value(oTimeNow));
+                    // void ('yield' + attr.Add(oSigningTimeAttr));
                     void ('yield' + oDocumentNameAttr.propset_Name(CADESCOM_AUTHENTICATED_ATTRIBUTE_DOCUMENT_NAME));
                     void ('yield' + oDocumentNameAttr.propset_Value("Document Name"));
                     void ('yield' + attr.Add(oDocumentNameAttr));
