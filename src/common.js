@@ -2,39 +2,39 @@ var bowser = require('bowser/bowser');
 var oids = require('./oids');
 
 var subjectNameTagsTranslations = [
-        {possibleNames: ['UnstructuredName'], translation: 'Неструктурированное имя'},
-        {possibleNames: ['CN'], translation: 'Владелец'},
-        {possibleNames: ['SN'], translation: 'Фамилия'},
-        {possibleNames: ['G'], translation: 'Имя Отчество'},
-        {possibleNames: ['C'], translation: 'Страна'},
-        {possibleNames: ['S'], translation: 'Регион'},
-        {possibleNames: ['STREET'], translation: 'Адрес'},
-        {possibleNames: ['O'], translation: 'Компания'},
-        {possibleNames: ['OU'], translation: 'Отдел/подразделение'},
-        {possibleNames: ['T'], translation: 'Должность'},
-        {possibleNames: ['ОГРН', 'OGRN'], translation: 'ОГРН'},
-        {possibleNames: ['ОГРНИП', 'OGRNIP'], translation: 'ОГРНИП'},
-        {possibleNames: ['СНИЛС', 'SNILS'], translation: 'СНИЛС'},
-        {possibleNames: ['ИНН', 'INN'], translation: 'ИНН'},
-        {possibleNames: ['E'], translation: 'Email'},
-        {possibleNames: ['L'], translation: 'Город'}
+        {possibleNames: ['UnstructuredName'], translation: 'Неструктурированное имя', key: 'unstructuredName' },
+        {possibleNames: ['CN'], translation: 'Владелец', key: 'owner' },
+        {possibleNames: ['SN'], translation: 'Фамилия', key: 'surname' },
+        {possibleNames: ['G'], translation: 'Имя Отчество', key: 'name' },
+        {possibleNames: ['C'], translation: 'Страна', key: 'country' },
+        {possibleNames: ['S'], translation: 'Регион', key: 'region' },
+        {possibleNames: ['STREET'], translation: 'Адрес', key: 'street' },
+        {possibleNames: ['O'], translation: 'Компания', key: 'organization' },
+        {possibleNames: ['OU'], translation: 'Отдел/подразделение', key: 'organizationUnit'},
+        {possibleNames: ['T'], translation: 'Должность', key: 'position' },
+        {possibleNames: ['ОГРН', 'OGRN'], translation: 'ОГРН', key: 'ogrn' },
+        {possibleNames: ['ОГРНИП', 'OGRNIP'], translation: 'ОГРНИП', key: 'ogrnip' },
+        {possibleNames: ['СНИЛС', 'SNILS'], translation: 'СНИЛС', key: 'snils' },
+        {possibleNames: ['ИНН', 'INN'], translation: 'ИНН', key: 'inn' },
+        {possibleNames: ['E'], translation: 'Email', key: 'email' },
+        {possibleNames: ['L'], translation: 'Город', key: 'city' }
     ],
 
     issuerNameTagsTranslations = [
-        {possibleNames: ['UnstructuredName'], translation: 'Неструктурированное имя'},
-        {possibleNames: ['CN'], translation: 'Удостоверяющий центр'},
-        {possibleNames: ['S'], translation: 'Регион'},
-        {possibleNames: ['C'], translation: 'Страна'},
-        {possibleNames: ['STREET'], translation: 'Адрес'},
-        {possibleNames: ['O'], translation: 'Компания'},
-        {possibleNames: ['OU'], translation: 'Тип'},
-        {possibleNames: ['T'], translation: 'Должность'},
-        {possibleNames: ['ОГРН', 'OGRN'], translation: 'ОГРН'},
-        {possibleNames: ['ОГРНИП', 'OGRNIP'], translation: 'ОГРНИП'},
-        {possibleNames: ['СНИЛС', 'SNILS'], translation: 'СНИЛС'},
-        {possibleNames: ['ИНН', 'INN'], translation: 'ИНН'},
-        {possibleNames: ['E'], translation: 'Email'},
-        {possibleNames: ['L'], translation: 'Город'}
+        {possibleNames: ['UnstructuredName'], translation: 'Неструктурированное имя', key: 'unstructuredName'},
+        {possibleNames: ['CN'], translation: 'Удостоверяющий центр', key: 'issuer'},
+        {possibleNames: ['S'], translation: 'Регион', key: 'region' },
+        {possibleNames: ['C'], translation: 'Страна', key: 'country' },
+        {possibleNames: ['STREET'], translation: 'Адрес', key: 'street' },
+        {possibleNames: ['O'], translation: 'Компания', key: 'organization' },
+        { possibleNames: ['OU'], translation: 'Тип', key: 'organizationUnit' },
+        {possibleNames: ['T'], translation: 'Должность', key: 'position' },
+        {possibleNames: ['ОГРН', 'OGRN'], translation: 'ОГРН', key: 'ogrn' },
+        {possibleNames: ['ОГРНИП', 'OGRNIP'], translation: 'ОГРНИП', key: 'ogrnip' },
+        {possibleNames: ['СНИЛС', 'SNILS'], translation: 'СНИЛС', key: 'snils' },
+        {possibleNames: ['ИНН', 'INN'], translation: 'ИНН', key: 'inn' },
+        {possibleNames: ['E'], translation: 'Email', key: 'email' },
+        {possibleNames: ['L'], translation: 'Город', key: 'city' }
     ];
 
 function generateAsyncFn(cb) {
@@ -84,7 +84,7 @@ function parseCertInfo(tags, infoString) {
     var result = infoString.match(/([а-яА-Яa-zA-Z0-9\.]+)=(?:("[^"]+?")|(.+?))(?:,|$)/g);
 
     if (result) {
-        result = result.map(function (group) {
+        result = result.reduce(function (r, group) {
             /**
              * Пример входной строки:
              *
@@ -96,6 +96,7 @@ function parseCertInfo(tags, infoString) {
                 title = parts && parts[1],
                 descr = parts && parts[2],
                 translated = false,
+                key,
                 oidTitle;
 
             // Если тайтл содержит ОИД, пытаемся расшифровать
@@ -114,26 +115,26 @@ function parseCertInfo(tags, infoString) {
             // Вырезаем лишние кавычки
             descr = descr.replace(/^"(.*)"/, '$1');
             descr = descr.replace(/"{2}/g, '"');
-
+            if ( title === 'CN' || title === 'OU' || title === 'O') {
+                descr = descr.replace(/\"+/g, '"').replace(/^\"+/, '').replace(/\"*$/, '"')
+            }
             tags.some(function (tag) {
                 return tag.possibleNames.some(function (possible) {
                     var match = possible === title;
 
                     if (match) {
-                        title = tag.translation;
-                        translated = true;
+                        key = tag.key
                     }
 
                     return match;
                 });
             });
 
-            return {
-                title: title,
-                descr: descr,
-                translated: translated
-            };
-        });
+            return Object.assign(r, { [key]: descr });
+            // return {
+            //     [key]: descr
+            // };
+        }, {});
     }
 
     return result;
@@ -172,7 +173,7 @@ function prepareCertsInfo(items) {
 
         // Удалось ли вытащить Common Name
         if (c.name && c.name[1]) {
-            c.name = c.name[1].replace(/\"/, '');
+            c.name = c.name[1].replace(/\"/g, '');
         }
 
         c.validFrom = getReadableDate(c.validFrom);

@@ -836,7 +836,7 @@ var CryptoPro =
 	function Certificate(item) {
 	    this._cert = item._cert;
 	    this.thumbprint = item.thumbprint;
-	    this.subjectName = item.subjectName.replace(/\"+/g, '"');
+	    this.subjectName = item.subjectName;
 	    this.issuerName = item.issuerName;
 	    this.validFrom = item.validFrom;
 	    this.validTo = item.validTo;
@@ -1237,9 +1237,7 @@ var CryptoPro =
 	    });
 	}
 	
-	function signData(hash, data, signType) {
-	    signType = typeof signType === 'undefined' ? true : Boolean(signType);
-	
+	function signData(hash, data) {
 	    return new Promise(function (resolve, reject) {
 	        getCadesCert(hash).then(function (cert) {
 	            eval(cryptoCommon.generateAsyncFn(function signData() {
@@ -1261,7 +1259,6 @@ var CryptoPro =
 	                var attr = 'yield' + oSigner.AuthenticatedAttributes2;
 	                var oDocumentNameAttr = 'yield' + cryptoCommon.createObj("CADESCOM.CPAttribute");
 	
-	
 	                try {
 	                    // void ('yield' + oSigningTimeAttr.propset_Name(CAPICOM_AUTHENTICATED_ATTRIBUTE_SIGNING_TIME))
 	                    // void ('yield' + oSigningTimeAttr.propset_Value(oTimeNow));
@@ -1279,7 +1276,7 @@ var CryptoPro =
 	                }
 	
 	                try {
-	                    signature = 'yield' + oSignedData.SignCades(oSigner, CADESCOM_CADES_BES, signType);
+	                    signature = 'yield' + oSignedData.SignCades(oSigner, CADESCOM_CADES_BES, true);
 	                } catch (err) {
 	                    reject('Не удалось создать подпись');
 	                    return;
@@ -1469,39 +1466,39 @@ var CryptoPro =
 	var oids = __webpack_require__(6);
 	
 	var subjectNameTagsTranslations = [
-	        {possibleNames: ['UnstructuredName'], translation: 'Неструктурированное имя'},
-	        {possibleNames: ['CN'], translation: 'Владелец'},
-	        {possibleNames: ['SN'], translation: 'Фамилия'},
-	        {possibleNames: ['G'], translation: 'Имя Отчество'},
-	        {possibleNames: ['C'], translation: 'Страна'},
-	        {possibleNames: ['S'], translation: 'Регион'},
-	        {possibleNames: ['STREET'], translation: 'Адрес'},
-	        {possibleNames: ['O'], translation: 'Компания'},
-	        {possibleNames: ['OU'], translation: 'Отдел/подразделение'},
-	        {possibleNames: ['T'], translation: 'Должность'},
-	        {possibleNames: ['ОГРН', 'OGRN'], translation: 'ОГРН'},
-	        {possibleNames: ['ОГРНИП', 'OGRNIP'], translation: 'ОГРНИП'},
-	        {possibleNames: ['СНИЛС', 'SNILS'], translation: 'СНИЛС'},
-	        {possibleNames: ['ИНН', 'INN'], translation: 'ИНН'},
-	        {possibleNames: ['E'], translation: 'Email'},
-	        {possibleNames: ['L'], translation: 'Город'}
+	        {possibleNames: ['UnstructuredName'], translation: 'Неструктурированное имя', key: 'unstructuredName' },
+	        {possibleNames: ['CN'], translation: 'Владелец', key: 'owner' },
+	        {possibleNames: ['SN'], translation: 'Фамилия', key: 'surname' },
+	        {possibleNames: ['G'], translation: 'Имя Отчество', key: 'name' },
+	        {possibleNames: ['C'], translation: 'Страна', key: 'country' },
+	        {possibleNames: ['S'], translation: 'Регион', key: 'region' },
+	        {possibleNames: ['STREET'], translation: 'Адрес', key: 'street' },
+	        {possibleNames: ['O'], translation: 'Компания', key: 'organization' },
+	        {possibleNames: ['OU'], translation: 'Отдел/подразделение', key: 'organizationUnit'},
+	        {possibleNames: ['T'], translation: 'Должность', key: 'position' },
+	        {possibleNames: ['ОГРН', 'OGRN'], translation: 'ОГРН', key: 'ogrn' },
+	        {possibleNames: ['ОГРНИП', 'OGRNIP'], translation: 'ОГРНИП', key: 'ogrnip' },
+	        {possibleNames: ['СНИЛС', 'SNILS'], translation: 'СНИЛС', key: 'snils' },
+	        {possibleNames: ['ИНН', 'INN'], translation: 'ИНН', key: 'inn' },
+	        {possibleNames: ['E'], translation: 'Email', key: 'email' },
+	        {possibleNames: ['L'], translation: 'Город', key: 'city' }
 	    ],
 	
 	    issuerNameTagsTranslations = [
-	        {possibleNames: ['UnstructuredName'], translation: 'Неструктурированное имя'},
-	        {possibleNames: ['CN'], translation: 'Удостоверяющий центр'},
-	        {possibleNames: ['S'], translation: 'Регион'},
-	        {possibleNames: ['C'], translation: 'Страна'},
-	        {possibleNames: ['STREET'], translation: 'Адрес'},
-	        {possibleNames: ['O'], translation: 'Компания'},
-	        {possibleNames: ['OU'], translation: 'Тип'},
-	        {possibleNames: ['T'], translation: 'Должность'},
-	        {possibleNames: ['ОГРН', 'OGRN'], translation: 'ОГРН'},
-	        {possibleNames: ['ОГРНИП', 'OGRNIP'], translation: 'ОГРНИП'},
-	        {possibleNames: ['СНИЛС', 'SNILS'], translation: 'СНИЛС'},
-	        {possibleNames: ['ИНН', 'INN'], translation: 'ИНН'},
-	        {possibleNames: ['E'], translation: 'Email'},
-	        {possibleNames: ['L'], translation: 'Город'}
+	        {possibleNames: ['UnstructuredName'], translation: 'Неструктурированное имя', key: 'unstructuredName'},
+	        {possibleNames: ['CN'], translation: 'Удостоверяющий центр', key: 'issuer'},
+	        {possibleNames: ['S'], translation: 'Регион', key: 'region' },
+	        {possibleNames: ['C'], translation: 'Страна', key: 'country' },
+	        {possibleNames: ['STREET'], translation: 'Адрес', key: 'street' },
+	        {possibleNames: ['O'], translation: 'Компания', key: 'organization' },
+	        { possibleNames: ['OU'], translation: 'Тип', key: 'organizationUnit' },
+	        {possibleNames: ['T'], translation: 'Должность', key: 'position' },
+	        {possibleNames: ['ОГРН', 'OGRN'], translation: 'ОГРН', key: 'ogrn' },
+	        {possibleNames: ['ОГРНИП', 'OGRNIP'], translation: 'ОГРНИП', key: 'ogrnip' },
+	        {possibleNames: ['СНИЛС', 'SNILS'], translation: 'СНИЛС', key: 'snils' },
+	        {possibleNames: ['ИНН', 'INN'], translation: 'ИНН', key: 'inn' },
+	        {possibleNames: ['E'], translation: 'Email', key: 'email' },
+	        {possibleNames: ['L'], translation: 'Город', key: 'city' }
 	    ];
 	
 	function generateAsyncFn(cb) {
@@ -1551,7 +1548,7 @@ var CryptoPro =
 	    var result = infoString.match(/([а-яА-Яa-zA-Z0-9\.]+)=(?:("[^"]+?")|(.+?))(?:,|$)/g);
 	
 	    if (result) {
-	        result = result.map(function (group) {
+	        result = result.reduce(function (r, group) {
 	            /**
 	             * Пример входной строки:
 	             *
@@ -1563,6 +1560,7 @@ var CryptoPro =
 	                title = parts && parts[1],
 	                descr = parts && parts[2],
 	                translated = false,
+	                key,
 	                oidTitle;
 	
 	            // Если тайтл содержит ОИД, пытаемся расшифровать
@@ -1581,26 +1579,26 @@ var CryptoPro =
 	            // Вырезаем лишние кавычки
 	            descr = descr.replace(/^"(.*)"/, '$1');
 	            descr = descr.replace(/"{2}/g, '"');
-	
+	            if ( title === 'CN' || title === 'OU' || title === 'O') {
+	                descr = descr.replace(/\"+/g, '"').replace(/^\"+/, '').replace(/\"*$/, '"')
+	            }
 	            tags.some(function (tag) {
 	                return tag.possibleNames.some(function (possible) {
 	                    var match = possible === title;
 	
 	                    if (match) {
-	                        title = tag.translation;
-	                        translated = true;
+	                        key = tag.key
 	                    }
 	
 	                    return match;
 	                });
 	            });
 	
-	            return {
-	                title: title,
-	                descr: descr,
-	                translated: translated
-	            };
-	        });
+	            return Object.assign(r, { [key]: descr });
+	            // return {
+	            //     [key]: descr
+	            // };
+	        }, {});
 	    }
 	
 	    return result;
@@ -1639,7 +1637,7 @@ var CryptoPro =
 	
 	        // Удалось ли вытащить Common Name
 	        if (c.name && c.name[1]) {
-	            c.name = c.name[1].replace(/\"/, '');
+	            c.name = c.name[1].replace(/\"/g, '');
 	        }
 	
 	        c.validFrom = getReadableDate(c.validFrom);
@@ -1774,6 +1772,7 @@ var CryptoPro =
 	    isValidCSPVersion: isValidCSPVersion,
 	    isValidCadesVersion: isValidCadesVersion
 	};
+
 
 /***/ },
 /* 4 */

@@ -5,7 +5,7 @@ var cryptoCommon = require('./common'),
 function Certificate(item) {
     this._cert = item._cert;
     this.thumbprint = item.thumbprint;
-    this.subjectName = item.subjectName.replace(/\"+/g, '"');
+    this.subjectName = item.subjectName;
     this.issuerName = item.issuerName;
     this.validFrom = item.validFrom;
     this.validTo = item.validTo;
@@ -406,9 +406,7 @@ function getCert(hash) {
     });
 }
 
-function signData(hash, data, signType) {
-    signType = typeof signType === 'undefined' ? true : Boolean(signType);
-
+function signData(hash, data) {
     return new Promise(function (resolve, reject) {
         getCadesCert(hash).then(function (cert) {
             eval(cryptoCommon.generateAsyncFn(function signData() {
@@ -430,7 +428,6 @@ function signData(hash, data, signType) {
                 var attr = 'yield' + oSigner.AuthenticatedAttributes2;
                 var oDocumentNameAttr = 'yield' + cryptoCommon.createObj("CADESCOM.CPAttribute");
 
-
                 try {
                     // void ('yield' + oSigningTimeAttr.propset_Name(CAPICOM_AUTHENTICATED_ATTRIBUTE_SIGNING_TIME))
                     // void ('yield' + oSigningTimeAttr.propset_Value(oTimeNow));
@@ -448,7 +445,7 @@ function signData(hash, data, signType) {
                 }
 
                 try {
-                    signature = 'yield' + oSignedData.SignCades(oSigner, CADESCOM_CADES_BES, signType);
+                    signature = 'yield' + oSignedData.SignCades(oSigner, CADESCOM_CADES_BES, true);
                 } catch (err) {
                     reject('Не удалось создать подпись');
                     return;
