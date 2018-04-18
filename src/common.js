@@ -116,7 +116,7 @@ function parseCertInfo(tags, infoString) {
             descr = descr.replace(/^"(.*)"/, '$1');
             descr = descr.replace(/"{2}/g, '"');
             if ( title === 'CN' || title === 'OU' || title === 'O') {
-                descr = descr.replace(/\"+/g, '"').replace(/^\"+/, '').replace(/\"*$/, '"')
+                descr = descr.replace(/\"+/g, '"').replace(/^\"+/, '').replace(/\"+$/, '"');
             }
             tags.some(function (tag) {
                 return tag.possibleNames.some(function (possible) {
@@ -131,9 +131,6 @@ function parseCertInfo(tags, infoString) {
             });
 
             return Object.assign(r, { [key]: descr });
-            // return {
-            //     [key]: descr
-            // };
         }, {});
     }
 

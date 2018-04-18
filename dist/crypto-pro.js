@@ -1580,7 +1580,7 @@ var CryptoPro =
 	            descr = descr.replace(/^"(.*)"/, '$1');
 	            descr = descr.replace(/"{2}/g, '"');
 	            if ( title === 'CN' || title === 'OU' || title === 'O') {
-	                descr = descr.replace(/\"+/g, '"').replace(/^\"+/, '').replace(/\"*$/, '"')
+	                descr = descr.replace(/\"+/g, '"').replace(/^\"+/, '').replace(/\"+$/, '"');
 	            }
 	            tags.some(function (tag) {
 	                return tag.possibleNames.some(function (possible) {
@@ -1595,9 +1595,6 @@ var CryptoPro =
 	            });
 	
 	            return Object.assign(r, { [key]: descr });
-	            // return {
-	            //     [key]: descr
-	            // };
 	        }, {});
 	    }
 	
