@@ -841,6 +841,7 @@ var CryptoPro =
 	    this.validFrom = item.validFrom;
 	    this.validTo = item.validTo;
 	    this.serialNumber = item.serialNumber;
+	    this.base64 = item.base64;
 	}
 	
 	/**
@@ -893,7 +894,6 @@ var CryptoPro =
 	 * */
 	Certificate.prototype.exportBase64 = function exportBase64() {
 	    var cert = this._cert;
-	
 	    return new Promise(function (resolve, reject) {
 	        eval(cryptoCommon.generateAsyncFn(function exportBase64() {
 	            var base64;
@@ -1104,7 +1104,6 @@ var CryptoPro =
 	    return new Promise(function (resolve, reject) {
 	        getCadesCert(hash).then(function (cert) {
 	            eval(cryptoCommon.generateAsyncFn(function getCertBase64() {
-	
 	                try {
 	                    base64 = 'yield' + cert.Export(0);
 	                } catch (err) {
@@ -1131,16 +1130,16 @@ var CryptoPro =
 	        }
 	
 	        eval(cryptoCommon.generateAsyncFn(function getCertsList() {
-	             try {
-	                 var oStore = 'yield' + cryptoCommon.createObj('CAdESCOM.Store'),
-	                     result = [],
-	                     certs,
-	                     count,
-	                     item;
-	             } catch (e) {
-	                 reject('Операция была отменена пользователем');
-	                 return;
-	             }
+	            try {
+	                var oStore = 'yield' + cryptoCommon.createObj('CAdESCOM.Store'),
+	                    result = [],
+	                    certs,
+	                    count,
+	                    item;
+	            } catch (e) {
+	                reject('Операция была отменена пользователем');
+	                return;
+	            }
 	
 	            // Открываем хранилище
 	            try {
@@ -1191,7 +1190,8 @@ var CryptoPro =
 	                        issuerName: 'yield' + item.IssuerName,
 	                        validFrom: 'yield' + item.ValidFromDate,
 	                        validTo: 'yield' + item.ValidToDate,
-	                        serialNumber: 'yield' + item.SerialNumber
+	                        serialNumber: 'yield' + item.SerialNumber,
+	                        base64: 'yield' + item.Export(0)
 	                    }));
 	
 	                    count--;
@@ -1263,13 +1263,13 @@ var CryptoPro =
 	                    // void ('yield' + oSigningTimeAttr.propset_Name(CAPICOM_AUTHENTICATED_ATTRIBUTE_SIGNING_TIME))
 	                    // void ('yield' + oSigningTimeAttr.propset_Value(oTimeNow));
 	                    // void ('yield' + attr.Add(oSigningTimeAttr));
-	                    void ('yield' + oDocumentNameAttr.propset_Name(CADESCOM_AUTHENTICATED_ATTRIBUTE_DOCUMENT_NAME));
-	                    void ('yield' + oDocumentNameAttr.propset_Value("Document Name"));
-	                    void ('yield' + attr.Add(oDocumentNameAttr));
+	                    void('yield' + oDocumentNameAttr.propset_Name(CADESCOM_AUTHENTICATED_ATTRIBUTE_DOCUMENT_NAME));
+	                    void('yield' + oDocumentNameAttr.propset_Value("Document Name"));
+	                    void('yield' + attr.Add(oDocumentNameAttr));
 	                    void('yield' + oSigner.propset_Certificate(cert));
 	                    void('yield' + oSigner.propset_Options(CAPICOM_CERTIFICATE_INCLUDE_END_ENTITY_ONLY));
 	                    void('yield' + oSignedData.propset_ContentEncoding(CADESCOM_BASE64_TO_BINARY));
-	                    void ('yield' + oSignedData.propset_Content(dataToSign));
+	                    void('yield' + oSignedData.propset_Content(dataToSign));
 	                } catch (err) {
 	                    reject('Не удалось установить настройки для подписи');
 	                    return;
