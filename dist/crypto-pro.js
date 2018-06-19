@@ -1271,6 +1271,7 @@ var CryptoPro =
 	                    void('yield' + oSignedData.propset_ContentEncoding(CADESCOM_BASE64_TO_BINARY));
 	                    void('yield' + oSignedData.propset_Content(dataToSign));
 	                } catch (err) {
+	                    console.error(err);
 	                    reject('Не удалось установить настройки для подписи');
 	                    return;
 	                }
@@ -1278,6 +1279,7 @@ var CryptoPro =
 	                try {
 	                    signature = 'yield' + oSignedData.SignCades(oSigner, CADESCOM_CADES_BES, true);
 	                } catch (err) {
+	                    console.error(err);
 	                    reject('Не удалось создать подпись');
 	                    return;
 	                }
@@ -1315,6 +1317,7 @@ var CryptoPro =
 	                    void('yield' + oAttrs.propset_Name(cryptoConstants.Time.AUTHENTICATED_ATTRIBUTE_SIGNING_TIME));
 	                    void('yield' + oAttrs.propset_Value(clientTime));
 	                } catch (err) {
+	                    console.error(err);
 	                    reject('Ошибка при установке данных подписи');
 	                    return;
 	                }
@@ -1328,6 +1331,7 @@ var CryptoPro =
 	                    void('yield' + oSignedData.propset_Content(dataBase64));
 	                    void('yield' + oSigner.propset_Options(cadesplugin.CAPICOM_CERTIFICATE_INCLUDE_END_ENTITY_ONLY));
 	                } catch (err) {
+	                    console.error(err);
 	                    reject('Не удалось установить настройки для подписи');
 	                    return;
 	                }
@@ -1339,6 +1343,7 @@ var CryptoPro =
 	                        signType
 	                    );
 	                } catch (err) {
+	                    console.error(err);
 	                    reject('Не удалось создать подпись');
 	                    return;
 	                }
@@ -1377,6 +1382,7 @@ var CryptoPro =
 	                    // Устанавливаем алгоритм хэширования
 	                    void('yield' + signerXML.propset_DigestMethod(cnts.GostXmlDSigUrls.XmlDsigGost3411Url));
 	                } catch (err) {
+	                    console.error(err);
 	                    reject('Не удалось установить настройки для подписи');
 	                    return;
 	                }
@@ -1384,6 +1390,7 @@ var CryptoPro =
 	                try {
 	                    signature = 'yield' + signerXML.Sign(oSigner);
 	                } catch (err) {
+	                    console.error(err);
 	                    reject('Не удалось создать подпись');
 	                    return;
 	                }
@@ -1466,7 +1473,7 @@ var CryptoPro =
 	var oids = __webpack_require__(6);
 	
 	var subjectNameTagsTranslations = [
-	        {possibleNames: ['UnstructuredName'], translation: 'Неструктурированное имя', key: 'unstructuredName' },
+	        {possibleNames: ['UnstructuredName', 'Неструктурированное имя'], translation: 'Неструктурированное имя', key: 'unstructuredName' },
 	        {possibleNames: ['CN'], translation: 'Владелец', key: 'owner' },
 	        {possibleNames: ['SN'], translation: 'Фамилия', key: 'surname' },
 	        {possibleNames: ['G'], translation: 'Имя Отчество', key: 'name' },

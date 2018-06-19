@@ -1,6 +1,6 @@
 {
   "name": "crypto-pro",
-  "version": "1.1.3",
+  "version": "1.1.4",
   "description": "API для взаимодействия с КриптоПро",
   "main": "src/index.js",
   "scripts": {

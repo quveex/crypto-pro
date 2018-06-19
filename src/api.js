@@ -440,6 +440,7 @@ function signData(hash, data) {
                     void('yield' + oSignedData.propset_ContentEncoding(CADESCOM_BASE64_TO_BINARY));
                     void('yield' + oSignedData.propset_Content(dataToSign));
                 } catch (err) {
+                    console.error(err);
                     reject('Не удалось установить настройки для подписи');
                     return;
                 }
@@ -447,6 +448,7 @@ function signData(hash, data) {
                 try {
                     signature = 'yield' + oSignedData.SignCades(oSigner, CADESCOM_CADES_BES, true);
                 } catch (err) {
+                    console.error(err);
                     reject('Не удалось создать подпись');
                     return;
                 }
@@ -484,6 +486,7 @@ function signDataBase64(hash, dataBase64, signType) {
                     void('yield' + oAttrs.propset_Name(cryptoConstants.Time.AUTHENTICATED_ATTRIBUTE_SIGNING_TIME));
                     void('yield' + oAttrs.propset_Value(clientTime));
                 } catch (err) {
+                    console.error(err);
                     reject('Ошибка при установке данных подписи');
                     return;
                 }
@@ -497,6 +500,7 @@ function signDataBase64(hash, dataBase64, signType) {
                     void('yield' + oSignedData.propset_Content(dataBase64));
                     void('yield' + oSigner.propset_Options(cadesplugin.CAPICOM_CERTIFICATE_INCLUDE_END_ENTITY_ONLY));
                 } catch (err) {
+                    console.error(err);
                     reject('Не удалось установить настройки для подписи');
                     return;
                 }
@@ -508,6 +512,7 @@ function signDataBase64(hash, dataBase64, signType) {
                         signType
                     );
                 } catch (err) {
+                    console.error(err);
                     reject('Не удалось создать подпись');
                     return;
                 }
@@ -546,6 +551,7 @@ function signDataXML(hash, dataXML) {
                     // Устанавливаем алгоритм хэширования
                     void('yield' + signerXML.propset_DigestMethod(cnts.GostXmlDSigUrls.XmlDsigGost3411Url));
                 } catch (err) {
+                    console.error(err);
                     reject('Не удалось установить настройки для подписи');
                     return;
                 }
@@ -553,6 +559,7 @@ function signDataXML(hash, dataXML) {
                 try {
                     signature = 'yield' + signerXML.Sign(oSigner);
                 } catch (err) {
+                    console.error(err);
                     reject('Не удалось создать подпись');
                     return;
                 }

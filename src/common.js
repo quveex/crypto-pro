@@ -2,7 +2,7 @@ var bowser = require('bowser/bowser');
 var oids = require('./oids');
 
 var subjectNameTagsTranslations = [
-        {possibleNames: ['UnstructuredName'], translation: 'Неструктурированное имя', key: 'unstructuredName' },
+        {possibleNames: ['UnstructuredName', 'Неструктурированное имя'], translation: 'Неструктурированное имя', key: 'unstructuredName' },
         {possibleNames: ['CN'], translation: 'Владелец', key: 'owner' },
         {possibleNames: ['SN'], translation: 'Фамилия', key: 'surname' },
         {possibleNames: ['G'], translation: 'Имя Отчество', key: 'name' },
